@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F401A38B-92E7-484A-B757-B28D016223D9}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ConsoleApp1</RootNamespace>
+    <AssemblyName>ConsoleApp1</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Logger.cs" />
+    <Compile Include="Hospital.cs" />
+    <Compile Include="Migrations\202003311446013_InitialCreate.cs" />
+    <Compile Include="Migrations\202003311446013_InitialCreate.designer.cs">
+      <DependentUpon>202003311446013_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311458465_first.cs" />
+    <Compile Include="Migrations\202003311458465_first.designer.cs">
+      <DependentUpon>202003311458465_first.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311512487_hugeChangeToDBContext.cs" />
+    <Compile Include="Migrations\202003311512487_hugeChangeToDBContext.designer.cs">
+      <DependentUpon>202003311512487_hugeChangeToDBContext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311524001_aGAINHugeupdate.cs" />
+    <Compile Include="Migrations\202003311524001_aGAINHugeupdate.designer.cs">
+      <DependentUpon>202003311524001_aGAINHugeupdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311535219_Add-Migration patientDbfix.cs" />
+    <Compile Include="Migrations\202003311535219_Add-Migration patientDbfix.designer.cs">
+      <DependentUpon>202003311535219_Add-Migration patientDbfix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311540091_fixedlists.cs" />
+    <Compile Include="Migrations\202003311540091_fixedlists.designer.cs">
+      <DependentUpon>202003311540091_fixedlists.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311545556_test.cs" />
+    <Compile Include="Migrations\202003311545556_test.designer.cs">
+      <DependentUpon>202003311545556_test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311548072_test1.cs" />
+    <Compile Include="Migrations\202003311548072_test1.designer.cs">
+      <DependentUpon>202003311548072_test1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202003311552168_namechanges.cs" />
+    <Compile Include="Migrations\202003311552168_namechanges.designer.cs">
+      <DependentUpon>202003311552168_namechanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004010924128_nottrue.cs" />
+    <Compile Include="Migrations\202004010924128_nottrue.designer.cs">
+      <DependentUpon>202004010924128_nottrue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011114177_fixKEY1.cs" />
+    <Compile Include="Migrations\202004011114177_fixKEY1.designer.cs">
+      <DependentUpon>202004011114177_fixKEY1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011116273_nullable.cs" />
+    <Compile Include="Migrations\202004011116273_nullable.designer.cs">
+      <DependentUpon>202004011116273_nullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011121442_revert.cs" />
+    <Compile Include="Migrations\202004011121442_revert.designer.cs">
+      <DependentUpon>202004011121442_revert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011209152_revertcontextagain.cs" />
+    <Compile Include="Migrations\202004011209152_revertcontextagain.designer.cs">
+      <DependentUpon>202004011209152_revertcontextagain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011349250_first1.cs" />
+    <Compile Include="Migrations\202004011349250_first1.designer.cs">
+      <DependentUpon>202004011349250_first1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011354062_fixing.cs" />
+    <Compile Include="Migrations\202004011354062_fixing.designer.cs">
+      <DependentUpon>202004011354062_fixing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011403207_fixinghej.cs" />
+    <Compile Include="Migrations\202004011403207_fixinghej.designer.cs">
+      <DependentUpon>202004011403207_fixinghej.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011421096_changes.cs" />
+    <Compile Include="Migrations\202004011421096_changes.designer.cs">
+      <DependentUpon>202004011421096_changes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004011838437_dbupdate.cs" />
+    <Compile Include="Migrations\202004011838437_dbupdate.designer.cs">
+      <DependentUpon>202004011838437_dbupdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Patient.cs" />
+    <Compile Include="CodeFirstDB.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Methods\Methods.csproj">
+      <Project>{af19a650-6bcd-4046-ae02-304785896a7c}</Project>
+      <Name>Methods</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202003311446013_InitialCreate.resx">
+      <DependentUpon>202003311446013_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311458465_first.resx">
+      <DependentUpon>202003311458465_first.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311512487_hugeChangeToDBContext.resx">
+      <DependentUpon>202003311512487_hugeChangeToDBContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311524001_aGAINHugeupdate.resx">
+      <DependentUpon>202003311524001_aGAINHugeupdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311535219_Add-Migration patientDbfix.resx">
+      <DependentUpon>202003311535219_Add-Migration patientDbfix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311540091_fixedlists.resx">
+      <DependentUpon>202003311540091_fixedlists.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311545556_test.resx">
+      <DependentUpon>202003311545556_test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311548072_test1.resx">
+      <DependentUpon>202003311548072_test1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202003311552168_namechanges.resx">
+      <DependentUpon>202003311552168_namechanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004010924128_nottrue.resx">
+      <DependentUpon>202004010924128_nottrue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011114177_fixKEY1.resx">
+      <DependentUpon>202004011114177_fixKEY1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011116273_nullable.resx">
+      <DependentUpon>202004011116273_nullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011121442_revert.resx">
+      <DependentUpon>202004011121442_revert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011209152_revertcontextagain.resx">
+      <DependentUpon>202004011209152_revertcontextagain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011349250_first1.resx">
+      <DependentUpon>202004011349250_first1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011354062_fixing.resx">
+      <DependentUpon>202004011354062_fixing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011403207_fixinghej.resx">
+      <DependentUpon>202004011403207_fixinghej.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011421096_changes.resx">
+      <DependentUpon>202004011421096_changes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004011838437_dbupdate.resx">
+      <DependentUpon>202004011838437_dbupdate.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
+</Project>
