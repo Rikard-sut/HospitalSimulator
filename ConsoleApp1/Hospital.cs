@@ -9,144 +9,73 @@ using static Simulator.CodeFirstDB;
 
 namespace Simulator
 {
+    /// <summary>
+    /// Klass för Patientmetoder och sjukhuslogik.
+    /// </summary>
     class Hospital
     {
+        //Ändra Denna variabel för att köra mot mer eller mindre patienter.
+        public int NumberOfPatientsToSimulate = 30;
+        //Variabel för att styra hela simuleringen. Körs till Dismisspatients är > NumberOfPatientsToSimulate.
         public int DismissedPatients = 0;
-        static Queue CurrentQueue = new Queue(); //Instansierar en kö för att ALLTID pilla i rätt instans av den akutella kön för simuleringen.
+        //Skapar en instans av alla sjukhusavdelnignar för att lätt kunna ladda in de aktualla avdelningarna från databasen.
+        //Hittar alltid därför rätt avdelning i databasen med hjälp av tex CurrentQueue.Id.
+        static Queue CurrentQueue = new Queue(); 
         static IVA CurrrentIva = new IVA();
         static Sanatorium CurrentSanatorium = new Sanatorium();
         static Afterlife CurrentAfterLife = new Afterlife();
         static Healthy CurrentHealthy = new Healthy();
 
         public event EventHandler<HospitalEventArgs> PatientMovedEventHandler;
+        /// <summary>
+        /// EventRaiser. Kallar på denna när hospital skall raisa ett event.
+        /// </summary>
+        /// <param name="e"></param>
         internal virtual void OnPatientMoved(HospitalEventArgs e)
         {
             PatientMovedEventHandler?.Invoke(this, e);
         }
+        /// <summary>
+        /// Lägger till 30 patienter. Ändra på NumberOfPatientsToSimulate om man vill köra större simulering.
+        /// </summary>
         public void AddPatients()
         {
             using (var db = new HospitalDB())
             {
                 Console.WriteLine("Loading Patients....");
 
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < NumberOfPatientsToSimulate; i++)
                 {
-                    Thread.Sleep(150); //För att det inte ska bli dubletter av Patient.
+                    Thread.Sleep(150); //För att det inte ska bli dubletter av Patient. Random arbetar med clockcykler
                     var patient = new Patient(Randomers.GenerateName(), Randomers.GenerateSSN(), Randomers.GenerateSymptomLevel());
                     db.Patients.Add(patient);
                     CurrentQueue.PatientsInQueue.Add(patient);
                 }
 
+                //sorterar databasen för att det skulle vara lättare att följa under testning osv. fyller ingen funktion för programmets funktionalitet.
                 CurrentQueue.PatientsInQueue = CurrentQueue.PatientsInQueue.OrderByDescending(x => x.SymptomLevel).ThenBy(x => x.BirthDate).ToList(); //Sorterar före inläggning i db.
                 db.Queue.Add(CurrentQueue);
                 db.IVA.Add(CurrrentIva);
                 db.Sanatorium.Add(CurrentSanatorium);
                 db.AfterLife.Add(CurrentAfterLife);
                 db.Healthy.Add(CurrentHealthy);
+                //Lägger till alla avdelningar i databasen så dom finns att ladda in senare.
                 db.SaveChanges();
             }
         }
-        /// <summary>
-        /// Select patient to move from queue or sanatorium and removes it from correct table.
-        /// </summary>
-        public void SelectPatientToTreat()
-        {
-            //-------------------------------
-            //using (var db = new HospitalDB())
-            //{
-            //    //var patients = CurrentQueue.PatientsInQueue.Select(x => x).Take(5);
 
-            //    //EN I TAGET
-            //    var patientQ = (from p in db.Patients
-            //                    where p.Queue != null
-            //                    orderby p.SymptomLevel descending, p.BirthDate
-            //                    select p).FirstOrDefault<Patient>();
-
-
-            //    var patientS = (from p in db.Patients
-            //                    where p.Sanatorium != null
-            //                    orderby p.SymptomLevel descending, p.BirthDate
-            //                    select p).FirstOrDefault<Patient>();
-
-            //    List<Patient> twoPatients = new List<Patient>();
-            //    twoPatients.Add(patientQ);
-            //    if (patientS != null)
-            //        twoPatients.Add(patientS);
-
-            //    twoPatients.OrderByDescending(x => x.SymptomLevel).OrderBy(x => x.BirthDate);
-            //    var patient = twoPatients.First();
-
-            //    var iva = db.IVA.Find(CurrrentIva.Id);
-            //    var sanat = db.Sanatorium.Find(CurrentSanatorium.Id); 
-
-            //    var queue = db.Queue.Find(CurrentQueue.Id);
-            //    db.Entry(queue).Collection(x => x.PatientsInQueue).Load();
-
-            //    if (patient.Sanatorium!= null)
-            //    {
-            //        db.Entry(sanat).Collection(x => x.Patients).Load();
-            //        AddToIvaOrSanatorium(patient);
-            //        sanat.Patients.Remove(patient);
-            //        db.SaveChanges();
-            //    }
-            //    if(patient.Queue != null)
-            //    {
-            //        AddToIvaOrSanatorium(patient);
-            //        queue.PatientsInQueue.Remove(patient);
-            //        db.SaveChanges();
-            //    }
-            //---------------------------------------------   
-
-
-            //var iva = db.IVA.Find(CurrrentIva.Id);
-            //Add all 5 patiens to IVA
-            //foreach (Patient patient in CurrentQueue.PatientsInQueue)
-            //{
-            //    iva.Patients.Add(patient);
-            //}
-            //db.SaveChanges();
-            //Removes all 5 patiens from currentQueue
-            //foreach (Patient patient in patients)
-            //{
-            //    patient.Queue = null;
-            //}
-            //db.Entry(queue).CurrentValues.SetValues(queue.PatientsInQueue);
-            //db.SaveChanges();
-            //}
-            //Runs every 5 seconds
-
-            //foreach(Patient item in patients)
-            //{ 
-            //    db.Patients.SqlQuery("UPDATE Patients set Queue_Id = null WHERE Patients.Name = @name", item.Name);
-            //    db.SaveChanges();
-
-            //}
-
-            //Queue queue = db.Queue.Include("Patient").Select(q => q).FirstOrDefault();
-            //var realqueu = db.Queue.Attach(queue);
-            //var queue = db.Queue.Find(CurrentQueue.Id);
-            //db.Entry(queue).Collection(x => x.PatientsInQueue).Load();
-            //foreach (Patient patient in patients)
-            //{
-
-            //    Iva.Patients.Add(patient);
-            //    queue.PatientsInQueue.Remove(patient);
-            //}
-            //db.IVA.Add(Iva);
-            //db.SaveChanges();
-
-        }
         public void MoveAroundPatients()
         {
             using (var db = new HospitalDB())
             {
-
+                //Laddar in rätt avdelningar från databasen.
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 var sanatorium = db.Sanatorium.Find(CurrentSanatorium.Id);
                 var iva = db.IVA.Find(CurrrentIva.Id);
-                //Load Queue with Patients
+               
                 
-
+                //Laddar in avdelningarnas patienter om dom har patienter i sig.
+                //Behöver inte load IVA för vi ska inte ta bort ifrån iva i detta läget.
                 if (sanatorium.Patients.Count > 0)
                 {
                     db.Entry(sanatorium).Collection(p => p.Patients).Load();
@@ -159,53 +88,49 @@ namespace Simulator
                 }
                 
                 db.SaveChanges();
-                //Add all 5 patients to IVA and removes all 5 patients from currentQueue/Sanatorium
+                //Fylller på 5 patienter i IVA första varvet, sedan fyller vi på när plats finns.
                 while (iva.Patients.Count < 5)
                 {
                     int result = FindSickestPatient();
                     Patient patient;
-                    //If Sanatorium
+                    //Om patient kom från sanatorium
                     if (result == 0)
                     {
                         patient = sanatorium.Patients.FirstOrDefault();
                         iva.Patients.Add(patient);
-                        //CurrrentIva.Patients.Add(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //Raisar Event att flytt skett
                         sanatorium.Patients.Remove(patient);
                     }
-                    //If Queue
+                    //Om patient kom från kön
                     else
                     {
                         patient = queue.PatientsInQueue.FirstOrDefault();
                         iva.Patients.Add(patient);
-                        //CurrrentIva.Patients.Add(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //Raisar event att flytt skett
                         queue.PatientsInQueue.Remove(patient);
-                        //CurrentQueue.PatientsInQueue.Remove(patient);
 
                     }
-
-                    db.SaveChanges();
                 }
                 db.SaveChanges();
-                //---------------------------------------------------------------------------------
-                //Add all 10 patients to Sanatorium and removes all 10 patients from currentQueue
+                //Första gången lägger vi till 10 patienter i sanatorium, annars fyller vi på efterhand.
                 while (sanatorium.Patients.Count < 10)
                 {
                     var patient = queue.PatientsInQueue.FirstOrDefault();
                     sanatorium.Patients.Add(patient);
-                    //CurrentSanatorium.Patients.Add(patient);
                     db.SaveChanges();
                     OnPatientMoved(new HospitalEventArgs(patient));
                     queue.PatientsInQueue.Remove(patient);
-                    //CurrentQueue.PatientsInQueue.Remove(patient);
                 }
                 db.SaveChanges();
 
             }
         }
+        /// <summary>
+        /// Hittar den sjukaste patienten från kö eller sanatorium
+        /// </summary>
+        /// <returns>1 eller 0 som representation av vilken avdeling vi ska ta bort ifrån</returns>
         private static int FindSickestPatient()
         {
             using (var db = new HospitalDB())
@@ -214,7 +139,8 @@ namespace Simulator
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 Patient patient1 = null;
                 Patient patient2 = null;
-                //If program not runs for the first time
+                
+                //Försöker ladda in kölista och sanatoriumlista
                 if (sanatorium.Patients.Count > 0)
                 {
                     db.Entry(sanatorium).Collection(p => p.Patients).Load();
@@ -228,8 +154,9 @@ namespace Simulator
                     patient2 = queue.PatientsInQueue[0];
                 }
                 
-                //Returns 0 for Sanatorium and 1 for Queue
-                //If Sanatorium has been loaded
+                //Returnerar 0 för sanatorium och 1 för kön.
+                //Hittade vi sjuk patient från båda avdelningarna jämför vi först
+                //Symptomlevel och sedan Birthdate.
                 if (patient1 != null && patient2 != null)
                 {
                     if (patient1.SymptomLevel.CompareTo(patient2.SymptomLevel) == 0)
@@ -238,7 +165,7 @@ namespace Simulator
                     }
                     return patient1.SymptomLevel > patient2.SymptomLevel ? 0 : 1;
                 }
-                //If Sanatorium has not been loaded
+                //Om sanatorium inte laddade är patient2 null och därför gör vi ingen jämföring ovan och returnerar direkt 0 för kö.
                 else if(patient1 != null)
                 {
                     return 0;
@@ -249,10 +176,14 @@ namespace Simulator
                 }
             }
         }
+        /// <summary>
+        /// Uppdaterar patienternas symptomLevelel.
+        /// </summary>
         public void UpdateSymptomLevelsForPatient()
         {
             using (var db = new HospitalDB())
             {
+                //Laddar in listan för varje avdelning. och för varje patient i denna lista kör vi metoden SymptomUpdater += patient.SymptomLevel.
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 db.Entry(queue).Collection(x => x.PatientsInQueue).Load();
                 foreach (var patient in queue.PatientsInQueue)
@@ -349,10 +280,14 @@ namespace Simulator
             }
             return symptomChange;
         }
+        /// <summary>
+        /// Flyttar patienter till Healthy eller Afterlive om deras symptomlevel är under 0 eller 10 och uppåt.
+        /// </summary>
         public void DismissHealthyOrDeadPatients()
         {
             using (var db = new HospitalDB())
             {
+                //Samma här. Laddar in ALLA listor denna gången för en patient kan bli frisk eller dör VARSOMHELST i sjukhuset.
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 var afterLife = db.AfterLife.Find(CurrentAfterLife.Id);
                 var healthy = db.Healthy.Find(CurrentHealthy.Id);
@@ -363,22 +298,24 @@ namespace Simulator
                 db.Entry(healthy).Collection(x => x.Patients).Load();
                 db.Entry(sanatorium).Collection(x => x.Patients).Load();
                 db.Entry(iva).Collection(x => x.Patients).Load();
+                //Gör samma foreach för VARJE avdelning för att se vilka patienter som skall flyttas till healthy eller afterlife.
                 foreach (Patient patient in queue.PatientsInQueue.ToList())
                 {
                     if (patient.SymptomLevel <= 0)
                     {
-                        healthy.Patients.Add(patient);
-                        queue.PatientsInQueue.Remove(patient);
-                        db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
-                        DismissedPatients++;
+                        healthy.Patients.Add(patient);          // vi lägger till i healthy eller afterlife beroende på IF. sedan tar bort från
+                        queue.PatientsInQueue.Remove(patient); // deras nuvarande plats, sen raisar event att det skett. alla loopar ser lika ut.
+                        db.SaveChanges();                      // bara vilka avdelningar vi arbetar med som skiljer sig.
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
+                        DismissedPatients++; //++ på dismissedpatients, denna variabel styr hela programmet. Dvs när alla patienter flyttats ut
+                                             // ur sjukhuset. (dom ligger i afterlife eller Healthy) kommer det sluta.
                     }
                     if (patient.SymptomLevel >= 10)
                     {
                         afterLife.Patients.Add(patient);
                         queue.PatientsInQueue.Remove(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                 }
@@ -389,7 +326,7 @@ namespace Simulator
                         healthy.Patients.Add(patient);
                         iva.Patients.Remove(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                     if (patient.SymptomLevel >= 10)
@@ -397,7 +334,7 @@ namespace Simulator
                         afterLife.Patients.Add(patient);
                         iva.Patients.Remove(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                 }
@@ -408,7 +345,7 @@ namespace Simulator
                         healthy.Patients.Add(patient);
                         sanatorium.Patients.Remove(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                     if (patient.SymptomLevel >= 10)
@@ -416,17 +353,17 @@ namespace Simulator
                         afterLife.Patients.Add(patient);
                         sanatorium.Patients.Remove(patient);
                         db.SaveChanges();
-                        OnPatientMoved(new HospitalEventArgs(patient));
+                        OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                 }
             }
-
         }
-
     }
 
-
+    /// <summary>
+    /// Eventargs för flytt. Denna funkar även för att skicka med info om tillfriskande och bortgång.
+    /// </summary>
     public class HospitalEventArgs : EventArgs
     {
         public Patient Patient { get; set; }
@@ -435,6 +372,5 @@ namespace Simulator
         {
             this.Patient = patient;
         }
-
     }
 }

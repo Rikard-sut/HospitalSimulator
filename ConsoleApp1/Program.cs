@@ -39,7 +39,7 @@ namespace Simulator
         }  
         public static void MovePatients()
         {
-            while(hospital.DismissedPatients < 30)
+            while(hospital.DismissedPatients < hospital.NumberOfPatientsToSimulate)
             {
                 hospital.MoveAroundPatients();
                 Thread.Sleep(5000);
@@ -47,7 +47,7 @@ namespace Simulator
         }
         public static void ContinueToUpdateSymptoms()
         {
-            while (hospital.DismissedPatients < 30)
+            while (hospital.DismissedPatients < hospital.NumberOfPatientsToSimulate)
             {
                 hospital.UpdateSymptomLevelsForPatient();
                 Thread.Sleep(3000);
@@ -55,7 +55,7 @@ namespace Simulator
         }
         public static void ContinueToMoveHealhyOrDeadPatients()
         {
-            while (hospital.DismissedPatients < 30)
+            while (hospital.DismissedPatients < hospital.NumberOfPatientsToSimulate)
             {
                 hospital.DismissHealthyOrDeadPatients();
                 Thread.Sleep(5000);
