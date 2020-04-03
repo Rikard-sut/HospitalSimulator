@@ -1,6 +1,7 @@
 ﻿using Methods;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace Simulator
         public int DismissedPatients = 0;
         //Skapar en instans av alla sjukhusavdelnignar för att lätt kunna ladda in de aktualla avdelningarna från databasen.
         //Hittar alltid därför rätt avdelning i databasen med hjälp av tex CurrentQueue.Id.
-        static Queue CurrentQueue = new Queue(); 
+        static Queue CurrentQueue = new Queue();
         static IVA CurrrentIva = new IVA();
         static Sanatorium CurrentSanatorium = new Sanatorium();
         static Afterlife CurrentAfterLife = new Afterlife();
@@ -72,8 +73,8 @@ namespace Simulator
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 var sanatorium = db.Sanatorium.Find(CurrentSanatorium.Id);
                 var iva = db.IVA.Find(CurrrentIva.Id);
-               
-                
+
+
                 //Laddar in avdelningarnas patienter om dom har patienter i sig.
                 //Behöver inte load IVA för vi ska inte ta bort ifrån iva i detta läget.
                 if (sanatorium.Patients.Count > 0)
@@ -81,12 +82,12 @@ namespace Simulator
                     db.Entry(sanatorium).Collection(p => p.Patients).Load();
                     sanatorium.Patients = sanatorium.Patients.OrderByDescending(x => x.SymptomLevel).ThenBy(x => x.BirthDate).ToList();
                 }
-                if(queue.PatientsInQueue.Count > 0)
+                if (queue.PatientsInQueue.Count > 0)
                 {
                     db.Entry(queue).Collection(p => p.PatientsInQueue).Load();
                     queue.PatientsInQueue = queue.PatientsInQueue.OrderByDescending(x => x.SymptomLevel).ThenBy(x => x.BirthDate).ToList();
                 }
-                
+
                 db.SaveChanges();
                 //Fylller på 5 patienter i IVA första varvet, sedan fyller vi på när plats finns.
                 while (iva.Patients.Count < 5)
@@ -99,6 +100,7 @@ namespace Simulator
                         patient = sanatorium.Patients.FirstOrDefault();
                         iva.Patients.Add(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //Raisar Event att flytt skett
                         sanatorium.Patients.Remove(patient);
                     }
@@ -108,6 +110,7 @@ namespace Simulator
                         patient = queue.PatientsInQueue.FirstOrDefault();
                         iva.Patients.Add(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //Raisar event att flytt skett
                         queue.PatientsInQueue.Remove(patient);
 
@@ -120,10 +123,12 @@ namespace Simulator
                     var patient = queue.PatientsInQueue.FirstOrDefault();
                     sanatorium.Patients.Add(patient);
                     db.SaveChanges();
+
                     OnPatientMoved(new HospitalEventArgs(patient));
                     queue.PatientsInQueue.Remove(patient);
                 }
                 db.SaveChanges();
+
 
             }
         }
@@ -139,7 +144,7 @@ namespace Simulator
                 var queue = db.Queue.Find(CurrentQueue.Id);
                 Patient patient1 = null;
                 Patient patient2 = null;
-                
+
                 //Försöker ladda in kölista och sanatoriumlista
                 if (sanatorium.Patients.Count > 0)
                 {
@@ -147,13 +152,13 @@ namespace Simulator
                     sanatorium.Patients = sanatorium.Patients.OrderByDescending(x => x.SymptomLevel).ThenBy(x => x.BirthDate).ToList();
                     patient1 = sanatorium.Patients[0];
                 }
-                if(queue.PatientsInQueue.Count > 0)
+                if (queue.PatientsInQueue.Count > 0)
                 {
                     db.Entry(queue).Collection(p => p.PatientsInQueue).Load();
                     queue.PatientsInQueue = queue.PatientsInQueue.OrderByDescending(x => x.SymptomLevel).ThenBy(x => x.BirthDate).ToList();
                     patient2 = queue.PatientsInQueue[0];
                 }
-                
+
                 //Returnerar 0 för sanatorium och 1 för kön.
                 //Hittade vi sjuk patient från båda avdelningarna jämför vi först
                 //Symptomlevel och sedan Birthdate.
@@ -166,7 +171,7 @@ namespace Simulator
                     return patient1.SymptomLevel > patient2.SymptomLevel ? 0 : 1;
                 }
                 //Om sanatorium inte laddade är patient2 null och därför gör vi ingen jämföring ovan och returnerar direkt 0 för kö.
-                else if(patient1 != null)
+                else if (patient1 != null)
                 {
                     return 0;
                 }
@@ -305,7 +310,8 @@ namespace Simulator
                     {
                         healthy.Patients.Add(patient);          // vi lägger till i healthy eller afterlife beroende på IF. sedan tar bort från
                         queue.PatientsInQueue.Remove(patient); // deras nuvarande plats, sen raisar event att det skett. alla loopar ser lika ut.
-                        db.SaveChanges();                      // bara vilka avdelningar vi arbetar med som skiljer sig.
+                        db.SaveChanges();
+                        // bara vilka avdelningar vi arbetar med som skiljer sig.
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++; //++ på dismissedpatients, denna variabel styr hela programmet. Dvs när alla patienter flyttats ut
                                              // ur sjukhuset. (dom ligger i afterlife eller Healthy) kommer det sluta.
@@ -315,6 +321,7 @@ namespace Simulator
                         afterLife.Patients.Add(patient);
                         queue.PatientsInQueue.Remove(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
@@ -326,6 +333,7 @@ namespace Simulator
                         healthy.Patients.Add(patient);
                         iva.Patients.Remove(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
@@ -334,6 +342,7 @@ namespace Simulator
                         afterLife.Patients.Add(patient);
                         iva.Patients.Remove(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
@@ -345,6 +354,7 @@ namespace Simulator
                         healthy.Patients.Add(patient);
                         sanatorium.Patients.Remove(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
@@ -353,12 +363,14 @@ namespace Simulator
                         afterLife.Patients.Add(patient);
                         sanatorium.Patients.Remove(patient);
                         db.SaveChanges();
+
                         OnPatientMoved(new HospitalEventArgs(patient)); //raisar event att flytt skett.
                         DismissedPatients++;
                     }
                 }
             }
         }
+
     }
 
     /// <summary>

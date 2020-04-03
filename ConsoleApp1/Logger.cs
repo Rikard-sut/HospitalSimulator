@@ -22,7 +22,6 @@ namespace Simulator
             //Väldigt sällan kraschar programmet för olika trådar använder denna metod samtidigt. isf får dom vänta med hjälp av denna lock.
             lock(streamLocker)
             { 
-
                 using (StreamWriter w = File.AppendText("log.txt"))
                 {
                     if (e.Patient != null)
